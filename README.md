@@ -13,6 +13,7 @@ I build an app with a direct and powerful purpose. It does all of the things tha
 * https://github.com/codefellows/seattle-201d57/blob/master/resources/handouts-graphics/README-template.md
 * https://github.com/codefellows/seattle-201d57/blob/fde07530759c8dfb91fa96a3437c578e40e38673/class-02/lab/README.md
 
+* Used Math.Random() function from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 
 
 ### Reflections and Comments

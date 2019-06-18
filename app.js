@@ -37,13 +37,12 @@ Object for images and properties == DONE
       imageSource
       clicksCounter
       displayedCounter
-      doNotShow boolean for previously displayed or selected.
     }
   array of all Image Objects == DONE
 
 
 function to randomnly display image { == DONE
-  must be 3 unique images (no duplicates)
+  must be 3 unique images (no duplicates) == DONE
   next round cannot display previously displayed images
 }
 
@@ -67,12 +66,6 @@ var resultsContainer = document.getElementById('results');
 var clickCount =  0;
 var maxClicks = 25;
 
-
-// Store current Objects displayed
-var leftImage = null;
-var centerImage = null;
-var rightImage = null;
-
 // CONSTRUCTOR
 var Product = function(imgSource = 'default.jpg', name, timesClicked, timesShown) {
   this.imgSource = imgSource;
@@ -86,15 +79,7 @@ var Product = function(imgSource = 'default.jpg', name, timesClicked, timesShown
 Product.allProducts = [];
 Product.previousProducts = [];
 
-// Function to change images of new products to display
-// var displayNewProducts = function(indexLeft, indexCenter, indexRight) {
-//   leftProductImageEl.src = Product.allProducts[indexLeft].imgSource;
-//   centerProductImageEl.src = Product.allProducts[indexCenter].imgSource;
-//   rightProductImageEl.src = Product.allProducts[indexRight].imgSource;
-// };
-
-
-//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+// Math.random() from MDN; see README for URL reference
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -109,6 +94,7 @@ var pickUniqueNonRepeating = function (currentPicks) {
     product = Product.allProducts[index];
 
   } while(Product.previousProducts.includes(product) || currentPicks.includes(product));
+
   return product;
 };
 
@@ -116,16 +102,18 @@ var pickUniqueNonRepeating = function (currentPicks) {
 var selectRandomProduct = function () {
   var currentPicks = [];
 
-  leftImage = pickUniqueNonRepeating(currentPicks);
+  var leftImage = pickUniqueNonRepeating(currentPicks);
   currentPicks.push(leftImage);
-  centerImage = pickUniqueNonRepeating(currentPicks);
+  var centerImage = pickUniqueNonRepeating(currentPicks);
   currentPicks.push(centerImage);
-  rightImage = pickUniqueNonRepeating(currentPicks);
+  var rightImage = pickUniqueNonRepeating(currentPicks);
   currentPicks.push(rightImage);
 
   leftProductImageEl.src = leftImage.imgSource;
   centerProductImageEl.src = centerImage.imgSource;
   rightProductImageEl.src = rightImage.imgSource;
+
+  Product.previousProducts = currentPicks;
 
   // displayNewProducts(leftIndex, centerIndex, rightIndex);
 };
@@ -150,20 +138,20 @@ var buildProducts = function() {
   new Product('./img/boots.jpg', 'boots');
   new Product('./img/breakfast.jpg', 'breakfast');
   new Product('./img/bubblegum.jpg', 'bubblegum');
-  // new Product('./img/chair.jpg', 'chair');
-  // new Product('./img/cthulhu.jpg', 'cthulhu');
-  // new Product('./img/dog-duck.jpg', 'dog-duck');
-  // new Product('./img/dragon.jpg', 'dragon');
-  // new Product('./img/pen.jpg', 'pen');
-  // new Product('./img/pet-sweep.jpg', 'pet-sweep');
-  // new Product('./img/scissors.jpg', 'scissors');
-  // new Product('./img/shark.jpg', 'shark');
-  // new Product('./img/sweep.png', 'sweep');
-  // new Product('./img/tauntaun.jpg', 'tauntaun');
-  // new Product('./img/unicorn.jpg', 'unicorn');
-  // new Product('./img/usb.gif', 'usb');
-  // new Product('./img/water-can.jpg', 'water-can');
-  // new Product('./img/wine-glass.jpg', 'wine-glass');
+  new Product('./img/chair.jpg', 'chair');
+  new Product('./img/cthulhu.jpg', 'cthulhu');
+  new Product('./img/dog-duck.jpg', 'dog-duck');
+  new Product('./img/dragon.jpg', 'dragon');
+  new Product('./img/pen.jpg', 'pen');
+  new Product('./img/pet-sweep.jpg', 'pet-sweep');
+  new Product('./img/scissors.jpg', 'scissors');
+  new Product('./img/shark.jpg', 'shark');
+  new Product('./img/sweep.png', 'sweep');
+  new Product('./img/tauntaun.jpg', 'tauntaun');
+  new Product('./img/unicorn.jpg', 'unicorn');
+  new Product('./img/usb.gif', 'usb');
+  new Product('./img/water-can.jpg', 'water-can');
+  new Product('./img/wine-glass.jpg', 'wine-glass');
 };
 
 // To start page
