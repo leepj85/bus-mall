@@ -62,69 +62,73 @@ var leftProductImageEl = document.getElementById('left-product-image');
 var centerProductImageEl = document.getElementById('center-product-image');
 var rightProductImageEl = document.getElementById('right-product-image');
 
+var resultsContainer = document.getElementById('results');
+
+var clickCount =  0;
+var maxClicks = 25;
+
+
 // Store current Objects displayed
 var leftImage = null;
 var centerImage = null;
 var rightImage = null;
 
 // CONSTRUCTOR
-var Product = function(imgSource, name) {
+var Product = function(imgSource = 'default.jpg', name, timesClicked, timesShown) {
   this.imgSource = imgSource;
   this.name = name;
-  this.selectedCounter = 0;
-  this.shownCounter = 0;
-  this.displayable = true;
+  this.timesClicked = timesClicked ? timesClicked : 0;
+  this.timesShown = timesShown || 0;
 
   Product.allProducts.push(this);
 };
 
 Product.allProducts = [];
+Product.previousProducts = [];
 
 // Function to change images of new products to display
-var displayNewProducts = function(indexLeft, indexCenter, indexRight) {
-  leftProductImageEl.src = Product.allProducts[indexLeft].imgSource;
-  centerProductImageEl.src = Product.allProducts[indexCenter].imgSource;
-  rightProductImageEl.src = Product.allProducts[indexRight].imgSource;
-};
+// var displayNewProducts = function(indexLeft, indexCenter, indexRight) {
+//   leftProductImageEl.src = Product.allProducts[indexLeft].imgSource;
+//   centerProductImageEl.src = Product.allProducts[indexCenter].imgSource;
+//   rightProductImageEl.src = Product.allProducts[indexRight].imgSource;
+// };
 
-// THIS IS BREAKING THE SITE. NEED TO DEBUG
-var isDisplayable = function(indexLeft, indexCenter, indexRight) {
-  return (Product.allProducts[indexLeft].isDisplayable && Product.allProducts[indexCenter].isDisplayable && Product.allProducts[indexRight].isDisplayable);
+
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  //The maximum is inclusive and the minimum is inclusive 
+  return Math.floor(Math.random() * (max - min + 1)) + min; 
+}
+
+var pickUniqueNonRepeating = function (currentPicks) {
+  var index, product;
+  do {
+    index = getRandomIntInclusive(0, Product.allProducts.length - 1);
+    product = Product.allProducts[index];
+
+  } while(Product.previousProducts.includes(product) || currentPicks.includes(product));
+  return product;
 };
 
 // Using Math.random() to select any 3 Products in allProducts[]
 var selectRandomProduct = function () {
-  // Select non-duplicate indexes. 
-  do {
-    var leftIndex = Math.floor(Math.random() * Product.allProducts.length);
-    var centerIndex = Math.floor(Math.random() * Product.allProducts.length);
-    var rightIndex = Math.floor(Math.random() * Product.allProducts.length);
-    // console.log('leftIndex: ' + leftIndex);
+  var currentPicks = [];
 
-    //TODO: Need to check if displayable is set to false 
-  } while(leftIndex === centerIndex || centerIndex === rightIndex || rightIndex === leftIndex || isDisplayable());
+  leftImage = pickUniqueNonRepeating(currentPicks);
+  currentPicks.push(leftImage);
+  centerImage = pickUniqueNonRepeating(currentPicks);
+  currentPicks.push(centerImage);
+  rightImage = pickUniqueNonRepeating(currentPicks);
+  currentPicks.push(rightImage);
 
-  // Object holders for current selection of Products
-  leftImage = Product.allProducts[leftIndex];
-  centerImage = Product.allProducts[centerIndex];
-  rightImage = Product.allProducts[rightIndex];
+  leftProductImageEl.src = leftImage.imgSource;
+  centerProductImageEl.src = centerImage.imgSource;
+  rightProductImageEl.src = rightImage.imgSource;
 
-  // Set each Product Object's displayable to false.
-  leftImage.displayable = false;
-  centerImage.displayable = false;
-  rightImage.displayable = false;
-
-  // console.log(leftImage.name);
-  // console.log(centerImage.name);
-  // console.log(rightImage.name);
-
-  // console.log(leftIndex);
-  // console.log(centerIndex);
-  // console.log(rightIndex);
-
-  displayNewProducts(leftIndex, centerIndex, rightIndex);
+  // displayNewProducts(leftIndex, centerIndex, rightIndex);
 };
-
 
 // Function to handle user click action.
 var handleProductClick = function (event) {
@@ -139,29 +143,36 @@ var handleProductClick = function (event) {
 productSectionEl.addEventListener('click', handleProductClick);
 
 // Instantiate Product Objects
-new Product('./img/bag.jpg', 'bag');
-new Product('./img/banana.jpg', 'banana');
-new Product('./img/bathroom.jpg', 'bathroom');
-new Product('./img/boots.jpg', 'boots');
-new Product('./img/breakfast.jpg', 'breakfast');
-new Product('./img/bubblegum.jpg', 'bubblegum');
-new Product('img/chair.jpg', 'chair');
-new Product('img/cthulhu.jpg', 'cthulhu');
-new Product('img/dog-duck.jpg', 'dog-duck');
-new Product('img/dragon.jpg', 'dragon');
-new Product('img/pen.jpg', 'pen');
-new Product('img/pet-sweep.jpg', 'pet-sweep');
-new Product('img/scissors.jpg', 'scissors');
-new Product('img/shark.jpg', 'shark');
-new Product('img/sweep.png', 'sweep');
-new Product('img/tauntaun.jpg', 'tauntaun');
-new Product('img/unicorn.jpg', 'unicorn');
-new Product('img/usb.gif', 'usb');
-new Product('img/water-can.jpg', 'water-can');
-new Product('img/wine-glass.jpg', 'wine-glass');
+var buildProducts = function() {
+  new Product('./img/bag.jpg', 'bag');
+  new Product('./img/banana.jpg', 'banana');
+  new Product('./img/bathroom.jpg', 'bathroom');
+  new Product('./img/boots.jpg', 'boots');
+  new Product('./img/breakfast.jpg', 'breakfast');
+  new Product('./img/bubblegum.jpg', 'bubblegum');
+  // new Product('./img/chair.jpg', 'chair');
+  // new Product('./img/cthulhu.jpg', 'cthulhu');
+  // new Product('./img/dog-duck.jpg', 'dog-duck');
+  // new Product('./img/dragon.jpg', 'dragon');
+  // new Product('./img/pen.jpg', 'pen');
+  // new Product('./img/pet-sweep.jpg', 'pet-sweep');
+  // new Product('./img/scissors.jpg', 'scissors');
+  // new Product('./img/shark.jpg', 'shark');
+  // new Product('./img/sweep.png', 'sweep');
+  // new Product('./img/tauntaun.jpg', 'tauntaun');
+  // new Product('./img/unicorn.jpg', 'unicorn');
+  // new Product('./img/usb.gif', 'usb');
+  // new Product('./img/water-can.jpg', 'water-can');
+  // new Product('./img/wine-glass.jpg', 'wine-glass');
+};
 
-// Starting project
-selectRandomProduct();
+// To start page
+var initPage = function() {
+  buildProducts();
+  selectRandomProduct();
+};
+  
+initPage();
 
 // TESTING
 // centerProduct.src = Product.allProducts[2].imgSource;
