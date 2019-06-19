@@ -1,0 +1,33 @@
+* {
+  /* background-color: black; */
+  box-sizing: border-box;
+}
+main > section {
+  text-align: center;
+
+  /* these should change as additional content is added to the page. */
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+main > section > div {
+  width: 400px;
+  height: 300px; 
+  margin: 0 auto;
+  display: inline-block;
+  /* margin-left: auto;
+  margin-right: auto; */
+}
+
+main > section > div > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* display:inline-block; */
+}
+
+section #results {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

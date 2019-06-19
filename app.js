@@ -205,7 +205,7 @@ function createChart() {
   var chartData = {
     labels: names,
     datasets: [{
-      label: '# of Votes',
+      label: '% of Selected vs Displayed',
       data: percents,
       backgroundColor: [
         'rgba(255, 99, 132, 0.2)',
