@@ -61,7 +61,7 @@ var leftProductImageEl = document.getElementById('left-product-image');
 var centerProductImageEl = document.getElementById('center-product-image');
 var rightProductImageEl = document.getElementById('right-product-image');
 
-var resultsContainer = document.getElementById('results');
+// var resultsContainer = document.getElementById('results');
 
 var clickCount =  0;
 var maxClicks = 25;
@@ -87,6 +87,7 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
 
+// Helper function to select only non-duplicate & previous images
 var pickUniqueNonRepeating = function (currentPicks) {
   var index, product;
   do {
@@ -98,37 +99,62 @@ var pickUniqueNonRepeating = function (currentPicks) {
   return product;
 };
 
-// Using Math.random() to select any 3 Products in allProducts[]
+// Display 3 Product images using Math.random() to select them in Products.allProducts[]
 var selectRandomProduct = function () {
   var currentPicks = [];
 
+  // Pick left image
   var leftImage = pickUniqueNonRepeating(currentPicks);
   currentPicks.push(leftImage);
+  // Pick center image
   var centerImage = pickUniqueNonRepeating(currentPicks);
   currentPicks.push(centerImage);
+  // Pick right image
   var rightImage = pickUniqueNonRepeating(currentPicks);
   currentPicks.push(rightImage);
 
+  // Set HTML img sources
   leftProductImageEl.src = leftImage.imgSource;
   centerProductImageEl.src = centerImage.imgSource;
   rightProductImageEl.src = rightImage.imgSource;
 
+  // Add current Products to Product.previousProducts array
   Product.previousProducts = currentPicks;
 
-  // displayNewProducts(leftIndex, centerIndex, rightIndex);
+
 };
 
 // Function to handle user click action.
 var handleProductClick = function (event) {
-  var productUserClicked = event.target;
-  var id = productUserClicked.id;
-  console.log('Target: ' + productUserClicked + ', ID: ' + id);
-  selectRandomProduct();
+  clickCount++;
+  if(event.target.id === 'left-product-image'){
+    Product.previousProducts[0].timesClicked++;
+  }
+  if (event.target.id === 'center-product-image') {
+    Product.previousProducts[1].timesClicked++;
+  }
+  if (event.target.id === 'right-product-image') {
+    Product.previousProducts[2].timesClicked++;
+  }
+  // Increment Product's timesShown counter
+  for (var i = 0; i < Product.previousProducts.length; i++) {
+    Product.previousProducts[i].timesShown++;
+  }
+  // var productUserClicked = event.target;
+  // var id = productUserClicked.id;
+  // console.log('User clicked on section: ' + id);
+  // Conditional statement to handle one off issue to not render new images after 5th user click.
+    
+  if (clickCount < maxClicks) {
+    selectRandomProduct();
+  } else {
+    productSectionEl.removeEventListener('click', handleProductClick);
+    //Display chart.js
+    createChart();
+  }
 };
 
-// Adding event listener to image section
-//TODO: how to exclude margins around images???
-productSectionEl.addEventListener('click', handleProductClick);
+
 
 // Instantiate Product Objects
 var buildProducts = function() {
@@ -158,9 +184,71 @@ var buildProducts = function() {
 var initPage = function() {
   buildProducts();
   selectRandomProduct();
+  // Adding event listener to image section
+  productSectionEl.addEventListener('click', handleProductClick);
 };
-  
+
 initPage();
 
-// TESTING
-// centerProduct.src = Product.allProducts[2].imgSource;
+function createChart() {
+  var chartCanvasEl = document.getElementById('analysis-chart');
+
+  var percents = [];
+  var names = [];
+
+  for (var i = 0; i < Product.allProducts.length; i++) {
+    var p = Math.floor((Product.allProducts[i].timesClicked / Product.allProducts[i].timesShown) * 100);
+    names.push(Product.allProducts[i].name);
+    percents.push(p);
+  }
+
+  var chartData = {
+    labels: names,
+    datasets: [{
+      label: '# of Votes',
+      data: percents,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.8)',
+        'rgba(231, 26, 209, 0.2)',
+        'rgba(20, 137, 196, 0.8)',
+        'rgba(137, 148, 134, 0.2)',
+        'rgba(6, 30, 69, 0.8)',
+        'rgba(12, 254, 122, 0.2)',
+        'rgba(110, 114, 155, 0.8)',
+        'rgba(184, 50, 180, 0.2)',
+        'rgba(199, 247, 139, 0.8)',
+        'rgba(217, 194, 48, 0.2)',
+        'rgba(74, 43, 210, 0.8)',
+        'rgba(238, 207, 41, 0.2)',
+        'rgba(169, 6, 51, 0.8)',
+        'rgba(31, 58, 123, 0.2)',
+        'rgba(32, 205, 173, 0.8)',
+      ],
+      borderWidth: 1
+    }]
+
+  };
+
+  var busChartObject = {
+    type: 'bar',
+    data : chartData,
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  };
+
+  var analysisChart = new Chart(chartCanvasEl, busChartObject);
+
+}
+
