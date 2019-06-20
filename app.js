@@ -61,10 +61,11 @@ var leftProductImageEl = document.getElementById('left-product-image');
 var centerProductImageEl = document.getElementById('center-product-image');
 var rightProductImageEl = document.getElementById('right-product-image');
 
+
 // var resultsContainer = document.getElementById('results');
 
 var clickCount =  0;
-var maxClicks = 25;
+var maxClicks = 5;
 
 // CONSTRUCTOR
 var Product = function(imgSource = 'default.jpg', name, timesClicked, timesShown) {
@@ -83,8 +84,8 @@ Product.previousProducts = [];
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  //The maximum is inclusive and the minimum is inclusive 
-  return Math.floor(Math.random() * (max - min + 1)) + min; 
+  //The maximum is inclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // Helper function to select only non-duplicate & previous images
@@ -140,44 +141,64 @@ var handleProductClick = function (event) {
   for (var i = 0; i < Product.previousProducts.length; i++) {
     Product.previousProducts[i].timesShown++;
   }
-  // var productUserClicked = event.target;
-  // var id = productUserClicked.id;
-  // console.log('User clicked on section: ' + id);
-  // Conditional statement to handle one off issue to not render new images after 5th user click.
-    
+  // Exit voting if maxClicks is reached and display data.
   if (clickCount < maxClicks) {
     selectRandomProduct();
   } else {
     productSectionEl.removeEventListener('click', handleProductClick);
+    // End of user voting, save data in local storage
+    var allProduct = Product.allProducts;
+    var status = {
+      isComplete: true,
+      allProduct: allProduct
+    };
+    localStorage.setItem('status', JSON.stringify(status));
     //Display chart.js
     createChart();
   }
 };
 
-
-
 // Instantiate Product Objects
 var buildProducts = function() {
+
   new Product('./img/bag.jpg', 'bag');
   new Product('./img/banana.jpg', 'banana');
   new Product('./img/bathroom.jpg', 'bathroom');
   new Product('./img/boots.jpg', 'boots');
   new Product('./img/breakfast.jpg', 'breakfast');
   new Product('./img/bubblegum.jpg', 'bubblegum');
-  new Product('./img/chair.jpg', 'chair');
-  new Product('./img/cthulhu.jpg', 'cthulhu');
-  new Product('./img/dog-duck.jpg', 'dog-duck');
-  new Product('./img/dragon.jpg', 'dragon');
-  new Product('./img/pen.jpg', 'pen');
-  new Product('./img/pet-sweep.jpg', 'pet-sweep');
-  new Product('./img/scissors.jpg', 'scissors');
-  new Product('./img/shark.jpg', 'shark');
-  new Product('./img/sweep.png', 'sweep');
-  new Product('./img/tauntaun.jpg', 'tauntaun');
-  new Product('./img/unicorn.jpg', 'unicorn');
-  new Product('./img/usb.gif', 'usb');
-  new Product('./img/water-can.jpg', 'water-can');
-  new Product('./img/wine-glass.jpg', 'wine-glass');
+  // new Product('./img/chair.jpg', 'chair');
+  // new Product('./img/cthulhu.jpg', 'cthulhu');
+  // new Product('./img/dog-duck.jpg', 'dog-duck');
+  // new Product('./img/dragon.jpg', 'dragon');
+  // new Product('./img/pen.jpg', 'pen');
+  // new Product('./img/pet-sweep.jpg', 'pet-sweep');
+  // new Product('./img/scissors.jpg', 'scissors');
+  // new Product('./img/shark.jpg', 'shark');
+  // new Product('./img/sweep.png', 'sweep');
+  // new Product('./img/tauntaun.jpg', 'tauntaun');
+  // new Product('./img/unicorn.jpg', 'unicorn');
+  // new Product('./img/usb.gif', 'usb');
+  // new Product('./img/water-can.jpg', 'water-can');
+  // new Product('./img/wine-glass.jpg', 'wine-glass');
+
+  if (localStorage.getItem('status')) {
+    var retentionDataArr = JSON.parse(localStorage.getItem('status'));
+    // console.log('Data EXISTS!');
+    //console.log(retentionDataArr);
+    for (var r = 0; r < retentionDataArr.allProduct.length; r++) {
+      // console.log(r);
+      // var tempName = retentionDataArr.allProduct[r].name;
+      Product.allProducts[r].timesClicked = retentionDataArr.allProduct[r].timesClicked;
+      Product.allProducts[r].timesShown = retentionDataArr.allProduct[r].timesShown;
+      // console.log('name: ' + tempName + ' at index: ' + tempIndex);
+    }
+  } else {
+    console.log('Data does not exists..');
+  }
+
+  // localStorage.setItem('productData', JSON.stringify(Product.allProducts));
+
 };
 
 // To start page
@@ -187,6 +208,14 @@ var initPage = function() {
   // Adding event listener to image section
   productSectionEl.addEventListener('click', handleProductClick);
 };
+
+if (localStorage.status) {
+  let status = JSON.parse(localStorage.getItem('status'));
+  if (status.isComplete === true) {
+    // console.log(status);
+    // createChart();
+  } 
+}
 
 initPage();
 
@@ -201,6 +230,7 @@ function createChart() {
     names.push(Product.allProducts[i].name);
     percents.push(p);
   }
+  percents.push(100);
 
   var chartData = {
     labels: names,
@@ -251,4 +281,3 @@ function createChart() {
   var analysisChart = new Chart(chartCanvasEl, busChartObject);
 
 }
-
