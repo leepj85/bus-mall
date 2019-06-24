@@ -184,7 +184,7 @@ var buildProducts = function() {
 
   if (localStorage.getItem('status')) {
     var retentionDataArr = JSON.parse(localStorage.getItem('status'));
-    // console.log('Data EXISTS!');
+    console.log('Data EXISTS!');
     //console.log(retentionDataArr);
     for (var r = 0; r < retentionDataArr.allProduct.length; r++) {
       // console.log(r);
